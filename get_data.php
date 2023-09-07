@@ -31,7 +31,7 @@ function process_player(string $dni, string $name, $date) {
 
     $data_json = json_encode($data);
 
-    $service_url = 'http://127.0.0.1:5000/procesar'; // Reemplaza con la URL real del servicio
+    $service_url = 'http://32.16.184.216:5000/procesar'; // Reemplaza con la URL real del servicio
 
     $options = array(
         'http' => array(
