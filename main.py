@@ -24,7 +24,8 @@ def process():
         # Devuelve el PDF como una respuesta HTTP
         response = make_response(pdf_content)
         response.headers['Content-Type'] = 'application/pdf'
-        response.headers['Content-Disposition'] = 'inline; filename=certificado.pdf'
+        response.headers['Content-Disposition'] = 'attachment; filename=certificado.pdf'  # Esta línea indica la descarga
+
 
         return response
     
