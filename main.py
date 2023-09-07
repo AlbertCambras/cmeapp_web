@@ -4,7 +4,7 @@ from reportlab.lib.units import inch
 from reportlab.lib.colors import CMYKColor
 from datetime import date
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, make_response
 
 app = Flask(__name__)
 
@@ -18,11 +18,15 @@ def process():
         name = data.get('name')
         date = data.get('date')
 
-        # Realiza la lógica de procesamiento aquí
-        resultado = f"Procesando datos: DNI={dni}, Nombre={name}, Fecha={date}"
+        # Genera el archivo PDF en memoria
+        pdf_content = CME(name, dni)
 
-        # Devuelve una respuesta JSON con el resultado
-        return jsonify({'mensaje': resultado})
+        # Devuelve el PDF como una respuesta HTTP
+        response = make_response(pdf_content)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = 'inline; filename=certificado.pdf'
+
+        return response
     
     except Exception as e:
         return jsonify({'error': str(e)})
@@ -306,7 +310,9 @@ def CME(name, nif):
 
     cme.drawImage("FIRMA.png", x,y ,width=2*inch,height=2*inch,preserveAspectRatio=True)
 
-    cme.save()
+    #cme.save()
+    return cme.getpdfdata()
+
 
 
 if __name__ == '__main__':

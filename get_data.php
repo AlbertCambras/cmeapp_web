@@ -8,12 +8,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $name = $_POST["name"];
     $date = $_POST["date"];
 
-    $comando = "python3 -c 'from main.py import process; resultado = process(\"$dni\", \"$name\", \"$date\"); print(resultado)'";
-    exec($comando, $output);
-    $mensaje = implode("\n", $output);
-
+    $response = process_player($name, $dni, $date);
     // Mensaje de éxito
-    $_SESSION["mensaje"] = $mensaje;
+    $_SESSION["mensaje"] = $response;
 
     // Redirige de vuelta al formulario
     header("Location: index.php");
@@ -23,4 +20,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     header("Location: index.php");
     exit();
 }
+
+function process_player(string $dni, string $name, $date) {
+
+    $data = array(
+        'dni' => $dni,
+        'name' => $name,
+        'date' => $date
+    );
+
+    $data_json = json_encode($data);
+
+    $service_url = 'http://127.0.0.1:5000'; // Reemplaza con la URL real del servicio
+
+    $options = array(
+        'http' => array(
+            'method'  => 'POST',
+            'header'  => 'Content-Type: application/json',
+            'content' => $data_json
+        )
+    );
+
+    $context = stream_context_create($options);
+
+    $response = file_get_contents($service_url, false, $context);
+
+    if ($response !== false) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
 ?>
