@@ -9,20 +9,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $date = $_POST["date"];
 
     $response = process_player($name, $dni, $date);
-    // Mensaje de éxito
-    $_SESSION["mensaje"] = $response;
 
-    // Redirige de vuelta al formulario
-  //  header("Location: index.php");
-    exit();
-} else {
-    // Redirige al formulario si no se ha enviado
-   // header("Location: index.php");
-    exit();
+    if ($response !== false) {
+        // Configura los encabezados para descargar el PDF
+        header("Content-Type: application/pdf");
+        header("Content-Disposition: attachment; filename=certificado.pdf");
+
+        // Imprime el contenido del PDF
+        echo $response;
+        exit();
+    } else {
+        $_SESSION["mensaje"] = "Error al generar el PDF.";
+    }
 }
 
-function process_player(string $dni, string $name, $date) {
+// Redirige de vuelta al formulario si algo salió mal
+header("Location: index.php");
+exit();
 
+function process_player(string $dni, string $name, $date) {
     $data = array(
         'dni' => $dni,
         'name' => $name,
@@ -31,7 +36,7 @@ function process_player(string $dni, string $name, $date) {
 
     $data_json = json_encode($data);
 
-    $service_url = 'http://32.16.184.216:5000/procesar'; // Reemplaza con la URL real del servicio
+    $service_url = 'http://localhost:5000/procesar'; // Reemplaza con la URL real del servicio
 
     $options = array(
         'http' => array(
@@ -45,11 +50,6 @@ function process_player(string $dni, string $name, $date) {
 
     $response = file_get_contents($service_url, false, $context);
 
-    if ($response !== false) {
-        return true;
-    } else {
-        return false;
-    }
+    return $response;
 }
-
 ?>
