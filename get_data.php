@@ -13,7 +13,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($response !== false) {
         // Configura los encabezados para descargar el PDF
         header("Content-Type: application/pdf");
-        header("Content-Disposition: attachment; filename=certificado.pdf");
+        header("Content-Disposition: attachment; filename=". strtoupper(str_replace(" ", "", $name)) . "pdf");
 
         // Imprime el contenido del PDF
         echo $response;
